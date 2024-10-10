@@ -1,0 +1,53 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package com.example.demo.config;
+
+import com.example.demo.service.CustomSuccessHandler;
+import com.example.demo.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+   @Autowired
+   CustomSuccessHandler customSuccessHandler;
+   @Autowired
+   CustomUserDetailsService customUserDetailsService;
+
+   public SecurityConfig() {
+   }
+
+   @Bean
+   public static PasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
+   }
+
+   @Bean
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      http.csrf((c) -> {
+         c.disable();
+      }).authorizeHttpRequests((request) -> {
+         ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)request.requestMatchers(new String[]{"/", "/login", "/registration", "/css/**"})).permitAll().requestMatchers(new String[]{"/clients"})).hasAuthority("ROLE_ADMIN").requestMatchers(new String[]{"/client-page"})).hasAuthority("ROLE_CLIENT").requestMatchers(new String[]{"/dashboard"})).hasAuthority("ROLE_LAWYER").requestMatchers(new String[]{"/paralegal-page"})).hasAuthority("ROLE_PARALEGAL").requestMatchers(new String[]{"/registration", "/css/**"})).permitAll().anyRequest()).authenticated();
+      }).formLogin((form) -> {
+         ((FormLoginConfigurer)((FormLoginConfigurer)form.loginPage("/login").loginProcessingUrl("/login")).successHandler(this.customSuccessHandler)).permitAll();
+      }).logout((form) -> {
+         form.invalidateHttpSession(true).clearAuthentication(true).logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout").permitAll();
+      });
+      return (SecurityFilterChain)http.build();
+   }
+
+   @Autowired
+   public void configure(AuthenticationManagerBuilder auth) throws Exception {
+      auth.userDetailsService(this.customUserDetailsService).passwordEncoder(passwordEncoder());
+   }
+}
