@@ -36,7 +36,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         } else if (isLawyer) {
             response.sendRedirect("/dashboard");
         } else if (isParalegal) {
-            response.sendRedirect("/paralegal-page");
+            response.sendRedirect("/paralegals");
         } else {
             response.sendRedirect("/error"); // Handle case with no matching roles
         }

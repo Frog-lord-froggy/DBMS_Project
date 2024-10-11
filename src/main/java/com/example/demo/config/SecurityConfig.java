@@ -37,7 +37,7 @@ public class SecurityConfig {
             .requestMatchers("/clients").hasAuthority("ROLE_ADMIN")
             .requestMatchers("/client-page").hasAuthority("ROLE_CLIENT")
             .requestMatchers("/dashboard").hasAuthority("ROLE_LAWYER")
-            .requestMatchers("/paralegal-page").hasAuthority("ROLE_PARALEGAL")
+            .requestMatchers("register/paralegal","/paralegals", "/paralegal-page").hasAuthority("ROLE_PARALEGAL")
             .requestMatchers("/registration", "/css/**").permitAll()
             .anyRequest().authenticated())
         
